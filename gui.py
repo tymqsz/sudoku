@@ -136,7 +136,6 @@ class App(Tk):
 
     def toggle_box(self, s):
         lock = locked(self.BOARD)
-        print_board(self.BOARD)
         y = s[0]
         x = s[1]
         if self.tg_box[y][x]:

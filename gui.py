@@ -1,301 +1,248 @@
 from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
-import time
 from tech import *
 import random
 
-root = Tk()
-root.title("Sudoku")
-root.geometry("1200x1000")
-root.config(bg="grey78")
+class App(Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Sudoku")
+        self.geometry("1200x1000")
+        self.config(bg="grey78")
 
-crt_nr = None
-crt_box = None
-tg_nr = [False for i in range(10)]
-tg_box = [[False] * 9 for i in range(9)]
-fixed = [[False] * 9 for i in range(9)]
-box = [[object] * 1000 for i in range(1000)]
-nr = [object for i in range(10)]
-BOARD = []
-result = []
+        self.crt_nr = None
+        self.crt_box = None
+        self.tg_nr = [False for i in range(10)]
+        self.tg_box = [[False] * 9 for i in range(9)]
+        self.fixed = [[False] * 9 for i in range(9)]
+        self.box = [[object] * 1000 for i in range(1000)]
+        self.nr = [object for i in range(10)]
+        self.BOARD = []
+        self.result = []
 
-pixel = PhotoImage()
-right = PhotoImage(file="right.png")
-left = PhotoImage(file="left.png")
-up = PhotoImage(file="up.png")
-down = PhotoImage(file="down.png")
+        self.pixel = PhotoImage()
+        self.right = PhotoImage(file="resources/right.png")
+        self.left = PhotoImage(file="resources/left.png")
+        self.up = PhotoImage(file="resources/up.png")
+        self.down = PhotoImage(file="resources/down.png")
 
-cornerNE = PhotoImage(file="cornerNE.png")
-cornerNW = PhotoImage(file="cornerNW.png")
-cornerSE = PhotoImage(file="cornerSE.png")
-cornerSW = PhotoImage(file="cornerSW.png")
+        self.cornerNE = PhotoImage(file="resources/cornerNE.png")
+        self.cornerNW = PhotoImage(file="resources/cornerNW.png")
+        self.cornerSE = PhotoImage(file="resources/cornerSE.png")
+        self.cornerSW = PhotoImage(file="resources/cornerSW.png")
 
-oper = Canvas(root, bg="pink", height=500, width=300)
-output = Label(master=oper, bg="PaleVioletRed", width=220, height=80, image=pixel, compound="c", font=("ariel", 20))
-new_board_btn = Button(master=oper, image=pixel, bg="grey78", width=180, height=80, text="new sudoku", compound="c",
-                       command=lambda: new_board(True), font=("ariel", 24), padx=0, pady=0)
-solve_btn = Button(master=oper, image=pixel, bg="grey78", width=180, height=80, text="solve", compound="c",
-                   command=lambda: solverize(BOARD), font=("ariel", 24), padx=0, pady=0)
-
-
-easy = Button(master=oper, image=pixel, bg="red4", width=180, height=80, text="easy", compound="c", font=("ariel", 24),
-              padx=0, pady=0, command=lambda: gen_b("easy"))
-hard = Button(master=oper, image=pixel, bg="red4", width=180, height=80, text="hard", compound="c", font=("ariel", 24),
-              padx=0, pady=0, command=lambda: gen_b("hard"))
-vhard = Button(master=oper, image=pixel, bg="red4", width=180, height=80, text="v.hard", compound="c",
-               font=("ariel", 24), padx=0, pady=0, command=lambda: gen_b("vhard"))
+        self.oper = Canvas(self, bg="pink", height=500, width=300)
+        self.output = Label(master=self.oper, bg="PaleVioletRed", width=220, height=80, image=self.pixel, compound="c", font=("ariel", 20))
+        self.new_board_btn = Button(master=self.oper, image=self.pixel, bg="grey78", width=180, height=80, text="new sudoku", compound="c",
+                            command=lambda: self.new_board(True), font=("ariel", 24), padx=0, pady=0)
+        self.solve_btn = Button(master=self.oper, image=self.pixel, bg="grey78", width=180, height=80, text="solve", compound="c",
+                        command=lambda: self.solve(self.BOARD), font=("ariel", 24), padx=0, pady=0)
 
 
-def setup():
-    for i in range(9):
-        for j in range(9):
-            box[i][j] = Button(bg="grey", image=pixel, width=80, height=80, command=lambda k=(i, j): toggle_box(k),
-                               compound='c', fg='white', font=("ariel", 24), padx=0, pady=0)
-            box[i][j].grid(row=i, column=j)
+        self.easy = Button(master=self.oper, image=self.pixel, bg="red4", width=180, height=80, text="easy", compound="c", font=("ariel", 24),
+                    padx=0, pady=0, command=lambda: self.gen_b("easy"))
+        self.hard = Button(master=self.oper, image=self.pixel, bg="red4", width=180, height=80, text="hard", compound="c", font=("ariel", 24),
+                    padx=0, pady=0, command=lambda: self.gen_b("hard"))
+        self.vhard = Button(master=self.oper, image=self.pixel, bg="red4", width=180, height=80, text="v.hard", compound="c",
+                    font=("ariel", 24), padx=0, pady=0, command=lambda: self.gen_b("vhard"))
 
-    for i in range(9):
-        box[i][2].config(image=right)
-    for i in range(9):
-        box[i][6].config(image=left)
-
-    for i in range(9):
-        box[2][i].config(image=down)
-    for i in range(9):
-        box[6][i].config(image=up)
-
-    box[2][2].config(image=cornerNW)
-    box[2][6].config(image=cornerNE)
-    box[6][2].config(image=cornerSW)
-    box[6][6].config(image=cornerSE)
-
-    for i in range(9):
-        ob = Label(width=10, height=3, text="", bg="grey78")
-        ob.grid(row=10, column=i)
-
-    for i in range(9):
-        nr[i] = Button(bg="pink", width=3, height=2, text=f"{i + 1}", command=lambda k=i: toggle_nr(k),
-                       font=("ariel", 24))
-        nr[i].grid(row=11, column=i)
-
-    nr[9] = Button(bg="PaleVioletRed", width=5, height=2, text="erase", command=lambda: toggle_nr(9),
-                   font=("ariel", 20))
-    nr[9].grid(row=11, column=9, padx=0)
-
-    oper.grid(row=0, column=9, rowspan=10, padx=80)
-
-    solve_btn.place(x=60, y=120)
-
-    new_board_btn.place(x=60, y=20)
-
-    output.place(x=40, y=350)
+        self.setup()
 
 
-def solve(board, lock):
-    flag = False
-    result = []
-
-    def recursive_solve1(board, y, x, lock):
-        nonlocal flag, result
-        if flag:
-            return
-        if y > 9 or x > 9:
-            result = [s[:] for s in board]
-            flag = True
-            return
-
-        if lock[y - 1][x - 1]:
-            new_x = 0
-            new_y = y
-            if x == 9:
-                new_x = 1
-                new_y = y + 1
-            else:
-                new_x = x + 1
-            recursive_solve1(board, new_y, new_x, lock)
-            return
-        p = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-        copy = [x[:] for x in board]
-        for val in p:
-            update(copy, y, x, val)
-            if valid_placement(board, y, x, val):
-                new_x = 0
-                new_y = y
-                if x == 9:
-                    new_x = 1
-                    new_y = y + 1
-                else:
-                    new_x = x + 1
-                recursive_solve1(copy, new_y, new_x, lock)
-            update(copy, y, x, " ")
-    recursive_solve1(board, 1, 1, lock)
-    return result
-
-
-def win_popup():
-    popup = Toplevel(root)
-    popup.geometry("300x200")
-    popup.config(bg="pink")
-    tit = Label(master=popup, text="Sudoku complete!", font=("ariel", 24), width=15, height=1, bg="pink")
-    tit.pack(anchor="n")
-
-    kupa1 = Label(master=popup, height=2, bg="pink")
-    kupa1.pack()
-
-    new_game_btn = Button(master=popup, text="new game", font=("ariel", 24), width=10, height=1, bg="pink",
-                          command=lambda: new_game(popup))
-    new_game_btn.pack()
-
-    kupa1 = Label(master=popup, height=1, bg="pink")
-    kupa1.pack()
-
-    quit_btn = Button(master=popup, text="quit", command=quit, bg="pink", font=("ariel", 16))
-    quit_btn.pack()
-
-
-def new_game(popup):
-    popup.destroy()
-    new_board(True)
-
-
-def toggle_nr(n):
-    global crt_nr
-    if tg_nr[n]:
-        tg_nr[n] = False
-        crt_nr = None
-        nr[n].config(bg="pink")
-    else:
-        output["text"] = ''
-        tg_nr[n] = True
-        crt_nr = n + 1
-        nr[n].config(bg="maroon1")
-        for i in range(9):
-            if i != n:
-                tg_nr[i] = False
-                nr[i].config(bg="pink")
-
-
-def toggle_box(s):
-    lock = locked(BOARD)
-    global crt_box
-    y = s[0]
-    x = s[1]
-    if tg_box[y][x]:
-        tg_box[y][x] = False
-        crt_box = None
-        box[y][x].config(bg="grey")
-    else:
-        output["text"] = ''
-        tg_box[y][x] = True
-        if not lock[y][x]:
-            box[y][x].config(bg="black")
-        crt_box = (y, x)
+    def setup(self):
         for i in range(9):
             for j in range(9):
-                if not (i == y and j == x):
-                    box[i][j].config(bg="grey")
-                    tg_box[i][j] = False
+                self.box[i][j] = Button(bg="grey", image=self.pixel, width=80, height=80, command=lambda k=(i, j): self.toggle_box(k),
+                                compound='c', fg='white', font=("ariel", 24), padx=0, pady=0)
+                self.box[i][j].grid(row=i, column=j)
+
+        for i in range(9):
+            self.box[i][2].config(image=self.right)
+        for i in range(9):
+            self.box[i][6].config(image=self.left)
+
+        for i in range(9):
+            self.box[2][i].config(image=self.down)
+        for i in range(9):
+            self.box[6][i].config(image=self.up)
+
+        self.box[2][2].config(image=self.cornerNW)
+        self.box[2][6].config(image=self.cornerNE)
+        self.box[6][2].config(image=self.cornerSW)
+        self.box[6][6].config(image=self.cornerSE)
+
+        for i in range(9):
+            ob = Label(width=10, height=3, text="", bg="grey78")
+            ob.grid(row=10, column=i)
+
+        for i in range(9):
+            self.nr[i] = Button(bg="pink", width=3, height=2, text=f"{i + 1}", command=lambda k=i: self.toggle_nr(k),
+                        font=("ariel", 24))
+            self.nr[i].grid(row=11, column=i)
+
+        self.nr[9] = Button(bg="PaleVioletRed", width=5, height=2, text="erase", command=lambda: self.toggle_nr(9),
+                    font=("ariel", 20))
+        self.nr[9].grid(row=11, column=9, padx=0)
+
+        self.oper.grid(row=0, column=9, rowspan=10, padx=80)
+
+        self.solve_btn.place(x=60, y=120)
+
+        self.new_board_btn.place(x=60, y=20)
+
+        self.output.place(x=40, y=350)
 
 
-def gen_b(level):
-    global BOARD
-    root.after(100, background)
-    fix = 0
+    def win_popup(self):
+        popup = Toplevel(self)
+        popup.geometry("300x200")
+        popup.config(bg="pink")
+        tit = Label(master=popup, text="Sudoku complete!", font=("ariel", 24), width=15, height=1, bg="pink")
+        tit.pack(anchor="n")
 
-    if level == "easy":
-        fix = random.randrange(35, 42)
-    elif level == "hard":
-        fix = random.randrange(28, 35)
-    else:
-        fix = random.randrange(22, 28)
+        kupa1 = Label(master=popup, height=2, bg="pink")
+        kupa1.pack()
 
-    board = generate(fixed=fix)
+        new_game_btn = Button(master=popup, text="new game", font=("ariel", 24), width=10, height=1, bg="pink",
+                            command=lambda: self.new_game(popup))
+        new_game_btn.pack()
 
-    for y in range(9):
-        for x in range(9):
-            if board[y][x] != " ":
-                box[y][x].config(text=f"{board[y][x]}", fg="black")
-                fixed[y][x] = True
-            else:
-                box[y][x].config(text=f"", fg="black")
-                fixed[y][x] = False
+        kupa1 = Label(master=popup, height=1, bg="pink")
+        kupa1.pack()
 
-    BOARD = [x[:] for x in board]
-    easy.place_forget()
-    hard.place_forget()
-    vhard.place_forget()
-    new_board_btn.place(x=60, y=20)
-    solve_btn.place(x=60, y=120)
+        quit_btn = Button(master=popup, text="quit", command=quit, bg="pink", font=("ariel", 16))
+        quit_btn.pack()
 
 
-def new_board(click, **kwargs):
-    if click:
-        new_board_btn.place_forget()
-        solve_btn.place_forget()
-        easy.place(x=60, y=20)
-        hard.place(x=60, y=120)
-        vhard.place(x=60, y=220)
-    else:
-        gen_b("easy")
+    def new_game(self, popup):
+        popup.destroy()
+        self.new_board(True)
 
 
-def solverize(board, **kwargs):
-    lock = locked(board)
-    result = solve(board, lock)
-
-    for y in range(9):
-        for x in range(9):
-            val = result[y][x]
-            if not lock[y][x]:
-                update(BOARD, y + 1, x + 1, val)
-                box[y][x].configure(text=f"{val}", fg="white")
-
-
-def complete(board):
-    N = 0
-
-    for y in range(9):
-        for x in range(9):
-            if board[y][x] != " ":
-                N += 1
-
-    return N == 81
-
-
-def background():
-    global crt_nr, crt_box, fixed, BOARD
-
-    if crt_box is not None and crt_nr is not None:
-        y = crt_box[0]
-        x = crt_box[1]
-        val = crt_nr
-
-        if fixed[y][x]:
-            print('fixed')
+    def toggle_nr(self, n):
+        if self.tg_nr[n]:
+            self.tg_nr[n] = False
+            self.crt_nr = None
+            self.nr[n].config(bg="pink")
         else:
-            if val == 10:
-                update(BOARD, y + 1, x + 1, " ")
-                box[y][x].configure(text="")
-            elif valid_placement(BOARD, y + 1, x + 1, val):
-                box[y][x].configure(text=f"{val}", fg="white")
-                update(BOARD, y + 1, x + 1, val)
+            self.output["text"] = ''
+            self.tg_nr[n] = True
+            self.crt_nr = n + 1
+            self.nr[n].config(bg="maroon1")
+            for i in range(9):
+                if i != n:
+                    self.tg_nr[i] = False
+                    self.nr[i].config(bg="pink")
+
+
+    def toggle_box(self, s):
+        lock = locked(self.BOARD)
+        print_board(self.BOARD)
+        y = s[0]
+        x = s[1]
+        if self.tg_box[y][x]:
+            self.tg_box[y][x] = False
+            self.crt_box = None
+            self.box[y][x].config(bg="grey")
+        else:
+            self.output["text"] = ''
+            self.tg_box[y][x] = True
+            if not lock[y][x]:
+                self.box[y][x].config(bg="black")
+            self.crt_box = (y, x)
+            for i in range(9):
+                for j in range(9):
+                    if not (i == y and j == x):
+                        self.box[i][j].config(bg="grey")
+                        self.tg_box[i][j] = False
+
+
+    def gen_b(self, level):
+        self.after(100, self.background)
+        fix = 0
+
+        if level == "easy":
+            fix = random.randrange(35, 42)
+        elif level == "hard":
+            fix = random.randrange(28, 35)
+        else:
+            fix = random.randrange(22, 28)
+
+        self.board = generate(fixed=fix)
+
+        for y in range(9):
+            for x in range(9):
+                if self.board[y][x] != " ":
+                    self.box[y][x].config(text=f"{self.board[y][x]}", fg="black")
+                    self.fixed[y][x] = True
+                else:
+                    self.box[y][x].config(text=f"", fg="black")
+                    self.fixed[y][x] = False
+
+        self.BOARD = [x[:] for x in self.board]
+        self.easy.place_forget()
+        self.hard.place_forget()
+        self.vhard.place_forget()
+        self.new_board_btn.place(x=60, y=20)
+        self.solve_btn.place(x=60, y=120)
+
+
+    def new_board(self, click):
+        if click:
+            self.new_board_btn.place_forget()
+            self.solve_btn.place_forget()
+            self.easy.place(x=60, y=20)
+            self.hard.place(x=60, y=120)
+            self.vhard.place(x=60, y=220)
+        else:
+            self.gen_b("easy")
+
+
+    def solve(self, board):
+        lock = locked(board)
+        result = solve(board, lock)
+
+        for y in range(9):
+            for x in range(9):
+                val = result[y][x]
+                if not lock[y][x]:
+                    update(self.BOARD, y + 1, x + 1, val)
+                    self.box[y][x].configure(text=f"{val}", fg="white")
+
+
+    def complete(self, board):
+        N = 0
+
+        for y in range(9):
+            for x in range(9):
+                if board[y][x] != " ":
+                    N += 1
+
+        return N == 81
+
+
+    def background(self):
+        if self.crt_box is not None and self.crt_nr is not None:
+            y = self.crt_box[0]
+            x = self.crt_box[1]
+            val = self.crt_nr
+
+            if self.fixed[y][x]:
+                print('fixed')
             else:
-                output["text"] = "invalid placement!"
-                print("invalid placement")
-        toggle_box((y, x))
-        toggle_nr(val - 1)
+                if val == 10:
+                    update(self.BOARD, y + 1, x + 1, " ")
+                    self.box[y][x].configure(text="")
+                elif valid_placement(self.BOARD, y + 1, x + 1, val):
+                    self.box[y][x].configure(text=f"{val}", fg="white")
+                    update(self.BOARD, y + 1, x + 1, val)
+                else:
+                    self.output["text"] = "invalid placement!"
+                    print("invalid placement")
+            self.toggle_box((y, x))
+            self.toggle_nr(val - 1)
 
-    if complete(BOARD):
-        win_popup()
-        return
+        if self.complete(self.BOARD):
+            self.win_popup()
+            return
 
-    root.after(100, background)
-
-
-def main():
-    setup()
-    root.mainloop()
-
-
-main()
+        self.after(100, self.background)

@@ -10,7 +10,9 @@ class DigitImage:
         self.path = file_path
         self.img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
         self.img = self.img[4:24, 4:24]
-        
+
+        #plt.imshow(self.img, cmap="gray")
+        #plt.show()
         to_mask = self.img.copy()
         self.mask = cv2.adaptiveThreshold(to_mask, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 15, -10)
         self.img = cv2.bitwise_and(self.img, self.mask)
@@ -32,7 +34,7 @@ class DigitImage:
             if val == 255:
                 nr_white += 1
         
-        if nr_white >= 28:
+        if nr_white >= 40:
             return False
         return True
         

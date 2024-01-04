@@ -1,3 +1,9 @@
+from image_processing import DigitImage, SudokuImage
+from keras import models
+import numpy as np
+
+model = models.load_model("models/digitModel.keras")
+
 def print_board(board, **kwargs):
     hor_line = ""
     hor_label = ""
@@ -51,4 +57,16 @@ def board_from_txt(filename):
         i += 2
     return good
 
+def board_from_image(filename):
+	image = SudokuImage(filename)
 
+	sudoku = []
+	for i in range(81):
+		digit = DigitImage(f"tiles/tile{i}.jpg")
+
+		pred = np.argmax(model.predict(digit.data))
+		sudoku.append(pred)
+
+	sudoku = np.array(sudoku).reshape((9, 9))
+	
+	return sudoku

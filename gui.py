@@ -44,7 +44,9 @@ class App(Tk):
                     padx=0, pady=0, command=lambda: self.gen_b("hard"))
         self.vhard = Button(master=self.oper, image=self.pixel, bg="red4", width=180, height=80, text="v.hard", compound="c",
                     font=("ariel", 24), padx=0, pady=0, command=lambda: self.gen_b("vhard"))
-
+		
+        self.load_canvas = Canvas(self, bg="pink", height=80, width=300)
+        self.from_image_btn = Button(master=self.load_canvas, image=self.pixel, bg="grey78", width=180, height=80, text="load from img", font=("ariel", 20), padx=0, pady=0)
         self.setup()
 
 
@@ -84,7 +86,7 @@ class App(Tk):
         self.nr[9].grid(row=11, column=9, padx=0)
 
         self.oper.grid(row=0, column=9, rowspan=10, padx=80)
-
+        self.load_canvas.grid(row = 2, column=9, rowspan=1, padx=80)
         self.solve_btn.place(x=60, y=120)
 
         self.new_board_btn.place(x=60, y=20)

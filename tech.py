@@ -175,31 +175,6 @@ def valid_placement(board, y, x, val):
 
     return True
 
-
-def board_from_txt(filename):
-    with open(filename) as source:
-        l = source.readlines()
-        shit = []
-        for line in l:
-            k = line.split("|")
-            shit.append(k)
-    i = 1
-    good = []
-    while i <= 17:
-        c = shit[i][1:len(shit[i]) - 1][:]
-        j = 0
-        while j < len(c):
-            c[j] = c[j].strip()
-            if c[j] == "":
-                c[j] = " "
-            else:
-                c[j] = int(c[j])
-            j += 1
-        good.append(c)
-        i += 2
-    return good
-
-
 def simplified(board):
     result = []
 

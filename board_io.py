@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 from image_processing import DigitImage, SudokuImage
 from keras import models
 import numpy as np
@@ -64,9 +67,9 @@ def board_from_image(filename):
 	for i in range(81):
 		digit = DigitImage(f"tiles/tile{i}.jpg")
 
-		pred = np.argmax(model.predict(digit.data))
+		pred = np.argmax(model.predict(digit.data, verbose=0))
 		sudoku.append(pred)
 
 	sudoku = np.array(sudoku).reshape((9, 9))
 	
-	return sudoku
+	return sudoku.tolist()

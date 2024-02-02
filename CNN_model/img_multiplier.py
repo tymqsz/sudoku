@@ -7,7 +7,7 @@ from data_extractor import to_csv
 import os
 
 
-folders = ["7"]
+folders = ["sudata/"+str(x) for x in range(1, 10)]
 
 kernels = [ np.array([[1.05, 0, 0],
                        [0, 1.05, 0],

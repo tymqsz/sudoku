@@ -5,7 +5,7 @@ from image_processing import DigitImage, SudokuImage
 from keras import models
 import numpy as np
 
-model = models.load_model("models/tm2.keras")
+model = models.load_model("models/TM.keras")
 
 def print_board(board, **kwargs):
     hor_line = ""

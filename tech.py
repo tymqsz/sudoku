@@ -185,22 +185,22 @@ def simplified(board):
     return result
 
 
-def check_board(board):
-    all_good = True
+def valid_board(board):
     y = 1
     x = 1
     for row in board:
         x = 1
         for i in row:
+            if i == ' ' or i == 0:
+                x +=1
+                continue
             val = int(i)
             if not valid_placement(board, y, x, val):
-                print(f"invalid postion {y, x} ({val})")
-                all_good = False
+                return False
             x += 1
         y += 1
 
-    if all_good:
-        print("valid board")
+    return True
 
 
 def make_holes(board, n):

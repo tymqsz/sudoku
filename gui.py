@@ -20,7 +20,8 @@ class App(Tk):
         self.BOARD = []
         self.result = []
         
-        self.fix_mode = True
+        self.fix_mode = False
+        self.solvable = False
 
         self.pixel = PhotoImage()
         self.right = PhotoImage(file="resources/right.png")
@@ -38,7 +39,7 @@ class App(Tk):
         self.new_board_btn = Button(master=self.oper, image=self.pixel, bg="grey78", width=180, height=80, text="new sudoku", compound="c",
                             command=lambda: self.new_board(True), font=("ariel", 24), padx=0, pady=0)
         self.solve_btn = Button(master=self.oper, image=self.pixel, bg="grey78", width=180, height=80, text="solve", compound="c",
-                        command=lambda: self.solve(self.BOARD), font=("ariel", 24), padx=0, pady=0)
+                        command=self.solve, font=("ariel", 24), padx=0, pady=0)
 
 
         self.easy = Button(master=self.oper, image=self.pixel, bg="red4", width=180, height=80, text="easy", compound="c", font=("ariel", 24),
@@ -234,9 +235,9 @@ class App(Tk):
             self.gen_b("easy")
 
 
-    def solve(self, board):
-        lock = locked(board)
-        result = solve(board, lock)
+    def solve(self):
+        lock = locked(self.BOARD)
+        result = solve(self.BOARD, lock)
         for y in range(9):
             for x in range(9):
                 val = result[y][x]
@@ -259,13 +260,19 @@ class App(Tk):
 
 
     def background(self):
+        if self.BOARD != []:
+            if valid_board(self.BOARD):
+                self.output["text"] = "valid board"
+            else:
+                self.output["text"] = "invalid board"
+
         if self.crt_box is not None and self.crt_nr is not None:
             y = self.crt_box[0]
             x = self.crt_box[1]
             val = self.crt_nr
 
             if self.fixed[y][x] and not self.fix_mode:
-                print('fixed')
+                pass
             else:
                 if val == 10:
                     update(self.BOARD, y + 1, x + 1, " ")

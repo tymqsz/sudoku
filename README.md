@@ -1,4 +1,4 @@
-# Funcionality
+# Functionality
 Application that enables you to:
 - play randomly generated sudokus
 - solve sudokus for you

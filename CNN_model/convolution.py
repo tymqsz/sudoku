@@ -1,8 +1,8 @@
 from PIL import Image
 import numpy as np
-import PIL
 
 
+# extract pixels from given image and save it as np.array
 def get_pixels(img):
     width, height = img.size
     pixels = np.zeros((width, height))
@@ -13,6 +13,7 @@ def get_pixels(img):
     return pixels
 
 
+# check if index doesnt go out of images bounds
 def good_index(index, size):
     x, y = index[0], index[1]
 
@@ -20,7 +21,8 @@ def good_index(index, size):
         return False 
     return True
 
-def get_matrix(kernel_size, pixels, pivot: tuple[2]):
+# get part of image the same size as kernel_size
+def get_matrix(kernel_size, pixels, pivot):
     ext = (kernel_size-1)//2
     matrix = np.zeros((kernel_size, kernel_size))
 
@@ -35,7 +37,7 @@ def get_matrix(kernel_size, pixels, pivot: tuple[2]):
     
     return matrix
 
-
+# apply convolution
 def get_val(M1, M2):
     val = 0
     
@@ -45,6 +47,7 @@ def get_val(M1, M2):
 
     return val
 
+# transform image
 def transform(kernel: np.array, img):
     width, height = img.size
     transformed = Image.new(size=(width, height), mode="L")

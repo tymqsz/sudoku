@@ -8,7 +8,8 @@ class App(Tk):
         super().__init__()
         self.title("Sudoku")
         self.geometry("1200x900")
-        self.config(bg="grey78")
+        self.resizable(False, False)
+        self.config(bg="#312528")
 
         # structures containing info abouut currently selected number and tile
         self.selected_nr = None
@@ -37,40 +38,43 @@ class App(Tk):
         self.cornerSW = PhotoImage(file="resources/gui/cornerSW.png")
 
         # canvas used for controling game state
-        self.operation_canvas = Canvas(self, bg="pink", height=500, width=300)
+        self.default_color = "#683142"
+        self.special_color = "#995E7C"
+        self.complementary_color = "#D3B19E"
+        self.operation_canvas = Canvas(self, bg=self.default_color, height=500, width=300)
 
-        self.output_label = Label(master=self.operation_canvas, bg="PaleVioletRed", 
+        self.output_label = Label(master=self.operation_canvas, bg=self.special_color, 
                                   width=220, height=80, image=self.pixel, 
                                   compound="c", font=("ariel", 20))
 
-        self.new_board_btn = Button(master=self.operation_canvas, image=self.pixel, bg="grey78", 
+        self.new_board_btn = Button(master=self.operation_canvas, image=self.pixel, bg=self.complementary_color, 
                                     width=180, height=80, text="new sudoku", compound="c", 
-                                    font=("ariel", 24), padx=0, pady=0,
+                                    font=("ariel", 22), padx=0, pady=0,
                                     command=lambda: self.load_new_board_canvas())
 
-        self.solve_btn = Button(master=self.operation_canvas, image=self.pixel, bg="grey78", 
+        self.solve_btn = Button(master=self.operation_canvas, image=self.pixel, bg=self.complementary_color,     
                                 width=180, height=80, text="solve", compound="c", 
                                 font=("ariel", 24), padx=0, pady=0,
                                 command=self.load_solved_board)
 
-        self.easy = Button(master=self.operation_canvas, image=self.pixel, bg="red4", 
+        self.easy = Button(master=self.operation_canvas, image=self.pixel, bg=self.complementary_color, 
                            width=180, height=80, text="easy", compound="c",
                            font=("ariel", 24), padx=0, pady=0, 
                            command=lambda: self.new_board("easy"))
 
-        self.hard = Button(master=self.operation_canvas, image=self.pixel, bg="red4", 
+        self.hard = Button(master=self.operation_canvas, image=self.pixel, bg=self.complementary_color, 
                            width=180, height=80, text="hard", compound="c",
                            font=("ariel", 24), padx=0, pady=0, 
                            command=lambda: self.new_board("hard"))
 
-        self.vhard = Button(master=self.operation_canvas, image=self.pixel, bg="red4", 
+        self.vhard = Button(master=self.operation_canvas, image=self.pixel, bg=self.complementary_color, 
                            width=180, height=80, text="vhard", compound="c",
                            font=("ariel", 24), padx=0, pady=0, 
                            command=lambda: self.new_board("vhard"))
 
         
         # canvas used for mporing boards
-        self.import_canvas = Canvas(self, bg="pink", height=180, width=300)
+        self.import_canvas = Canvas(self, bg=self.default_color, height=180, width=300)
 
         self.setup()
 
@@ -98,12 +102,12 @@ class App(Tk):
         self.tile_btn[6][6].config(image=self.cornerSE)
         
         for i in range(9):
-            self.nr_btn[i] = Button(bg="pink", width=3, height=2,
+            self.nr_btn[i] = Button(bg=self.default_color, width=3, height=2,
                                     text=f"{i + 1}", font=("ariel", 24),
                                     command=lambda k=i: self.toggle_nr(k))
             self.nr_btn[i].grid(row=10, column=i, pady=20)
 
-        self.erase_btn = Button(bg="PaleVioletRed", width=5, height=2,
+        self.erase_btn = Button(bg=self.special_color, width=5, height=2,
                                 text="erase", font=("ariel", 20),
                                 command=lambda: self.toggle_nr(9))
         self.erase_btn.grid(row=10, column=9, padx=0)
@@ -112,14 +116,14 @@ class App(Tk):
         self.operation_canvas.grid(row=0, column=9, rowspan=7, padx=0)
         self.import_canvas.grid(row = 7, column=9, rowspan=2, padx=80)
 
-        self.import_label = Label(master=self.import_canvas, text="Import from .jpg, .png, .txt",
-                                   font=("ariel", 16), padx=5, pady=5)
-        self.import_label.place(x=0, y=0)
+        self.import_label = Label(master=self.import_canvas, text="import from .jpg/.png",
+                                   font=("ariel", 16), padx=5, pady=5, background=self.complementary_color) 
+        self.import_label.place(x=30, y=5)
 
-        self.import_input = Entry(master=self.import_canvas, background="gray", font=("ariel", 15))
+        self.import_input = Entry(master=self.import_canvas, background=self.special_color, font=("ariel", 15))
         self.import_input.place(x=20, y=60)
 
-        self.import_btn = Button(master=self.import_canvas, bg="PaleVioletRed", text="import",
+        self.import_btn = Button(master=self.import_canvas, bg=self.special_color, text="import",
                                  font=("ariel", 20), command=self.import_sudoku)
         self.import_btn.place(x=90, y=110)
 
@@ -189,17 +193,17 @@ class App(Tk):
         if self.nr_pressed[n]:
             self.nr_pressed[n] = False
             self.selected_nr = None
-            self.nr_btn[n].config(bg="pink")
+            self.nr_btn[n].config(bg=self.default_color)
         else: # otherwise turn it on and switch off other btns
             self.output_label["text"] = ''
             self.nr_pressed[n] = True
             self.selected_nr = n + 1
-            self.nr_btn[n].config(bg="maroon1")
+            self.nr_btn[n].config(bg=self.special_color)
 
             for i in range(9):
                 if i != n:
                     self.nr_pressed[i] = False
-                    self.nr_btn[i].config(bg="pink")
+                    self.nr_btn[i].config(bg=self.default_color)
 
 
     def toggle_box(self, box):

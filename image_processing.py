@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 from scipy import ndimage
-import matplotlib.pyplot as plt
 
 class DigitImage:
     def __init__(self, file_path):
@@ -37,7 +36,7 @@ class DigitImage:
             if val == 255:
                 nr_white += 1
         
-        if nr_white >= 30:
+        if nr_white >= 50:
             return False
         return True
         
@@ -230,6 +229,6 @@ class SudokuImage:
         for y in range(0, imgheight-M+1, M):
             for x in range(0, imgwidth-N+1, N):
                 tiles = image_copy[y:y+M, x:x+N]
-                cv2.imwrite('tiles/'+'tile'+f'{i}.jpg', tiles)
+                cv2.imwrite('temp/tiles/'+'tile'+f'{i}.jpg', tiles)
                 i += 1
 

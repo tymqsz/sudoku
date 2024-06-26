@@ -5,7 +5,7 @@ from convolution import transform
 import os
 
 # folders which contain digit images extracted from sudokus 
-folders = ["image_data/"+str(x) for x in range(1, 10)]
+folders = ["image_data/"+str(x) for x in range(9,9)]
 
 
 # basic convolution kernels used to create some noise in images

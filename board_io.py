@@ -4,11 +4,9 @@ import numpy as np
 
 from image_processing import DigitImage, SudokuImage
 
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # make tf not print garbage onto terminal
-model = models.load_model("models/TM.keras")
+model = models.load_model("resources/models/model.keras")
 
-# function printing board to console
 def print_board(board):
     hor_line = ""
 
@@ -22,18 +20,18 @@ def print_board(board):
         print()
     print(hor_line)
 
-# function allowing to import board from image
-def board_from_image(filename):
-	SudokuImage(filename) # save all tiles in separate files in "tiles/" folder
 
-    # for each tile use model to predict correspoding nr
+def board_from_image(filename):
+	SudokuImage(filename) # split sudoku board into tiles
+
+    # for each tile use model to predict correspoding digit
 	sudoku = []
 	for i in range(81):
-		digit = DigitImage(f"tiles/tile{i}.jpg")
+		digit = DigitImage(f"temp/tiles/tile{i}.jpg")
 
 		pred = np.argmax(model.predict(digit.data, verbose=0)) # preddict correct nr
 		sudoku.append(pred)
 
-	#sudoku = np.array(sudoku).reshape((9, 9))
+	sudoku = np.array(sudoku).reshape((9, 9))
 	
 	return sudoku.tolist()

@@ -61,7 +61,7 @@ model = keras.Sequential([
 
 model.compile(
     loss=keras.losses.SparseCategoricalCrossentropy(),
-    optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+    optimizer=keras.optimizers.Adam(learning_rate=1e-4),
     metrics=[
         keras.metrics.SparseCategoricalAccuracy(name="acc"),
     ],
@@ -69,7 +69,7 @@ model.compile(
 
 
 # train and save model
-model.fit(X, y, epochs=10, validation_split=0.1, batch_size=64,
-          callbacks=[keras.callbacks.EarlyStopping(monitor="val_acc", patience=7, restore_best_weights=True)])
+model.fit(X, y, epochs=25, validation_split=0.2, batch_size=128,
+          callbacks=[keras.callbacks.EarlyStopping(monitor="val_acc", patience=3)])
 
-model.save("../models/TM.keras")
+model.save("../resources/models/model.keras")

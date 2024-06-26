@@ -25,16 +25,16 @@ def to_csv(folder, label, size, out_file):
             df.loc[index] = row
             index += 1
 
-    df.to_csv(join(join(getcwd(), "data"), out_file), index=False)
+    df.to_csv(join(join(getcwd(), "CNN_model/csv_data"), out_file), index=False)
 
 
 # save all digit images as csvs
-to_csv("image_data/1", 1, 1000, "1s.csv")
-to_csv("image_data/2", 2, 1000, "2s.csv")
-to_csv("image_data/3", 3, 1000, "3s.csv")
-to_csv("image_data/4", 4, 1000, "4s.csv")
-to_csv("image_data/5", 5, 1000, "5s.csv")
-to_csv("image_data/6", 6, 1000, "6s.csv")
-to_csv("image_data/7", 7, 1000, "7s.csv")
-to_csv("image_data/8", 8, 1000, "8s.csv")
-to_csv("image_data/9", 9, 1000, "9s.csv")
+#to_csv("image_data/1", 1, 1000, "1s.csv")
+#to_csv("image_data/2", 2, 1000, "2s.csv")
+#to_csv("image_data/3", 3, 1000, "3s.csv")
+#to_csv("image_data/4", 4, 1000, "4s.csv")
+#to_csv("image_data/5", 5, 1000, "5s.csv")
+#to_csv("image_data/6", 6, 1000, "6s.csv")
+#to_csv("image_data/7", 7, 1000, "7s.csv")
+#to_csv("image_data/8", 8, 1000, "8s.csv")
+to_csv("CNN_model/image_data/9", 9, 1000, "9s.csv")

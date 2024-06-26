@@ -27,14 +27,14 @@ class App(Tk):
 
         # images used for displaying board
         self.pixel = PhotoImage()
-        self.right = PhotoImage(file="resources/right.png")
-        self.left = PhotoImage(file="resources/left.png")
-        self.up = PhotoImage(file="resources/up.png")
-        self.down = PhotoImage(file="resources/down.png")
-        self.cornerNE = PhotoImage(file="resources/cornerNE.png")
-        self.cornerNW = PhotoImage(file="resources/cornerNW.png")
-        self.cornerSE = PhotoImage(file="resources/cornerSE.png")
-        self.cornerSW = PhotoImage(file="resources/cornerSW.png")
+        self.right = PhotoImage(file="resources/gui/right.png")
+        self.left = PhotoImage(file="resources/gui/left.png")
+        self.up = PhotoImage(file="resources/gui/up.png")
+        self.down = PhotoImage(file="resources/gui/down.png")
+        self.cornerNE = PhotoImage(file="resources/gui/cornerNE.png")
+        self.cornerNW = PhotoImage(file="resources/gui/cornerNW.png")
+        self.cornerSE = PhotoImage(file="resources/gui/cornerSE.png")
+        self.cornerSW = PhotoImage(file="resources/gui/cornerSW.png")
 
         # canvas used for controling game state
         self.operation_canvas = Canvas(self, bg="pink", height=500, width=300)
@@ -46,12 +46,12 @@ class App(Tk):
         self.new_board_btn = Button(master=self.operation_canvas, image=self.pixel, bg="grey78", 
                                     width=180, height=80, text="new sudoku", compound="c", 
                                     font=("ariel", 24), padx=0, pady=0,
-                                    command=lambda: self.new_board(True))
+                                    command=lambda: self.load_new_board_canvas())
 
         self.solve_btn = Button(master=self.operation_canvas, image=self.pixel, bg="grey78", 
                                 width=180, height=80, text="solve", compound="c", 
                                 font=("ariel", 24), padx=0, pady=0,
-                                command=self.solve)
+                                command=self.load_solved_board)
 
         self.easy = Button(master=self.operation_canvas, image=self.pixel, bg="red4", 
                            width=180, height=80, text="easy", compound="c",
@@ -71,9 +71,6 @@ class App(Tk):
         
         # canvas used for mporing boards
         self.import_canvas = Canvas(self, bg="pink", height=180, width=300)
-        #self.from_image_btn = Button(master=self.import_canvas, image=self.pixel, bg="grey78",
-        #                             width=180, height=80, text="load from img",
-        #                             font=("ariel", 20), padx=0, pady=0)
 
         self.setup()
 
@@ -265,19 +262,15 @@ class App(Tk):
         self.solve_btn.place(x=60, y=120)
 
 
-    def new_board(self, btn_clicked):
-        # if button clicked - reload canvas
-        if btn_clicked:
-            self.new_board_btn.place_forget()
-            self.solve_btn.place_forget()
-            self.easy.place(x=60, y=20)
-            self.hard.place(x=60, y=120)
-            self.vhard.place(x=60, y=220)
-        else: # board generated automatically
-            self.new_board("easy")
+    def load_new_board_canvas(self):
+        self.new_board_btn.place_forget()
+        self.solve_btn.place_forget()
+        self.easy.place(x=60, y=20)
+        self.hard.place(x=60, y=120)
+        self.vhard.place(x=60, y=220)
 
 
-    def solve(self):
+    def load_solved_board(self):
         locked_tiles = get_locked_tiles(self.BOARD)
         solved_board = solve(self.BOARD, locked_tiles)
 

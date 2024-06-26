@@ -1,0 +1,4 @@
+keras==3.4.0
+numpy==1.26.0
+opencv-python==4.9.0
+scipy==1.11.3

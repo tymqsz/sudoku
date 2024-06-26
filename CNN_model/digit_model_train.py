@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import keras
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from sklearn.utils import shuffle
 
 # read MNIST data

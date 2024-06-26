@@ -97,10 +97,6 @@ class App(Tk):
         self.tile_btn[6][2].config(image=self.cornerSW)
         self.tile_btn[6][6].config(image=self.cornerSE)
         
-        #for i in range(9):
-        #    ob = Label(width=10, height=3, text="", bg="grey78")
-        #    ob.grid(row=10, column=i)
-
         for i in range(9):
             self.nr_btn[i] = Button(bg="pink", width=3, height=2,
                                     text=f"{i + 1}", font=("ariel", 24),
@@ -317,10 +313,11 @@ class App(Tk):
                     update_board(self.BOARD, tile_y + 1, tile_x + 1, selected_nr)
                 else:
                     self.output_label["text"] = "invalid placement!"
+
             self.toggle_box((tile_y, tile_x))
             self.toggle_nr(selected_nr - 1)
 
-        # check if complete and make sure not only one popup is shown
+        # check if complete and make sure only one popup is shown
         if self.board_complete() and self.prev_board != self.BOARD:
             self.win_popup()
         

@@ -27,10 +27,13 @@ def board_from_image(filename):
     # for each tile use model to predict correspoding digit
 	sudoku = []
 	for i in range(81):
-		digit = DigitImage(f"temp/tiles/tile{i}.jpg")
+		file = f"temp/tiles/tile{i}.jpg"
+		digit = DigitImage(file)
 
 		pred = np.argmax(model.predict(digit.data, verbose=0)) # preddict correct nr
 		sudoku.append(pred)
+            
+		os.remove(file)
 
 	sudoku = np.array(sudoku).reshape((9, 9))
 	

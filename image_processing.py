@@ -4,31 +4,24 @@ from scipy import ndimage
 
 class DigitImage:
     def __init__(self, file_path):
-        # read file and extract middle (important) part
+        # read and crop
         self.img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
         self.img = self.img[4:24, 4:24]
 
-        # create mask (binary thresholded digit image)
+        # create and use mask (binary thresholded digit image)
         to_mask = self.img.copy()
         self.mask = cv2.adaptiveThreshold(to_mask, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 15, -10)
-
-        # mask original image
         self.img = cv2.bitwise_and(self.img, self.mask)
 
-        # check if image is empty, if not - center it
         if self.is_empty():
             self.img = np.zeros((28, 28), dtype=np.float32)
         else:
             self.center()
         
-        # save preprocessed image
         cv2.imwrite(file_path, self.img)
-
-        # save data in format fitted to be used by CNN
         self.data = self.img.reshape((1, 28, 28, -1))
 
     def is_empty(self):
-        # if at least 30 pixels are white in masked image - consider it not empty
         vals = self.mask.flatten()
 
         nr_white = 0
@@ -36,7 +29,8 @@ class DigitImage:
             if val == 255:
                 nr_white += 1
         
-        if nr_white >= 50:
+        # >30 pixels are white => image considered not empty
+        if nr_white >= 30: 
             return False
         return True
         
@@ -91,7 +85,7 @@ class DigitImage:
                                       right_border, cv2.BORDER_CONSTANT, None, (0, 0, 0))
 
 
-        # shift image based on center of mass calculation
+        # shift image based on center of mass
         cy, cx = ndimage.measurements.center_of_mass(self.img)
         rows, cols = self.img.shape
         shiftx = np.round(cols/2.0-cx).astype(int)
@@ -101,7 +95,6 @@ class DigitImage:
         
         self.img = np.array(shifted).reshape((28,28))
 
-        # threshold the image
         _, self.img = cv2.threshold(self.img, 127, 255, cv2.THRESH_TOZERO+cv2.THRESH_OTSU) 
 
     @staticmethod
